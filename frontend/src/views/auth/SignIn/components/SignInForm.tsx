@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
+import Checkbox from '@/components/ui/Checkbox'
 import { FormItem, Form } from '@/components/ui/Form'
 import PasswordInput from '@/components/shared/PasswordInput'
 import classNames from '@/utils/classNames'
@@ -20,15 +21,13 @@ interface SignInFormProps extends CommonProps {
 type SignInFormSchema = {
     email: string
     password: string
+    rememberMe: boolean
 }
 
 const validationSchema = z.object({
-    email: z
-        .string()
-        .min(1, { message: 'Please enter your email' }),
-    password: z
-        .string()
-        .min(1, { message: 'Please enter your password' }),
+    email: z.string().min(1, { message: 'Veuillez saisir votre e-mail' }),
+    password: z.string().min(1, { message: 'Veuillez saisir votre mot de passe' }),
+    rememberMe: z.boolean(),
 })
 
 const SignInForm = (props: SignInFormProps) => {
@@ -44,6 +43,7 @@ const SignInForm = (props: SignInFormProps) => {
         defaultValues: {
             email: 'admin-01@ecme.com',
             password: '123Qwe',
+            rememberMe: false,
         },
         resolver: zodResolver(validationSchema),
     })
@@ -70,7 +70,7 @@ const SignInForm = (props: SignInFormProps) => {
         <div className={className}>
             <Form onSubmit={handleSubmit(onSignIn)}>
                 <FormItem
-                    label="Email"
+                    label="E-mail"
                     invalid={Boolean(errors.email)}
                     errorMessage={errors.email?.message}
                 >
@@ -80,7 +80,7 @@ const SignInForm = (props: SignInFormProps) => {
                         render={({ field }) => (
                             <Input
                                 type="email"
-                                placeholder="Email"
+                                placeholder="john@company.com"
                                 autoComplete="off"
                                 {...field}
                             />
@@ -88,7 +88,7 @@ const SignInForm = (props: SignInFormProps) => {
                     />
                 </FormItem>
                 <FormItem
-                    label="Password"
+                    label="Mot de passe"
                     invalid={Boolean(errors.password)}
                     errorMessage={errors.password?.message}
                     className={classNames(
@@ -103,10 +103,21 @@ const SignInForm = (props: SignInFormProps) => {
                         render={({ field }) => (
                             <PasswordInput
                                 type="text"
-                                placeholder="Password"
+                                placeholder="Mot de passe"
                                 autoComplete="off"
                                 {...field}
                             />
+                        )}
+                    />
+                </FormItem>
+                <FormItem className="mb-4">
+                    <Controller
+                        name="rememberMe"
+                        control={control}
+                        render={({ field }) => (
+                            <Checkbox checked={field.value} onChange={(checked) => field.onChange(checked)}>
+                                Se souvenir de moi
+                            </Checkbox>
                         )}
                     />
                 </FormItem>
@@ -117,7 +128,7 @@ const SignInForm = (props: SignInFormProps) => {
                     variant="solid"
                     type="submit"
                 >
-                    {isSubmitting ? 'Signing in...' : 'Sign In'}
+                    {isSubmitting ? 'Connexion...' : 'Se connecter'}
                 </Button>
             </Form>
         </div>
